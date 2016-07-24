@@ -7,19 +7,71 @@ output:
 
 
 ## Loading and preprocessing the data
+Read the "activity" datapack
+
+```{r read csv, echo=TRUE}
+activity <- read.csv("activity.csv",header=TRUE)
+```
+
+Format second columns as Date
+```{r format date, echo=TRUE}
+factortocharacter <- as.character(activity[,2])
+activity[,2] <- as.Date(factortocharacter,format="%Y-%m-%d")
+```
 
 
 
 ## What is mean total number of steps taken per day?
 
 
+Table of the total number of steps taken per day
+```{r total steps per day, echo=TRUE}
+totalsteps <- aggregate(activity$steps, by=list(Date=activity$date), FUN=sum)
+```
+
+Histogram of the total number of steps taken each day
+
+```{r histogram of total steps, echo=TRUE}
+hist(totalsteps$x, breaks = 6, main = "Frequency of number of steps per day", 
+    xlab = "Number of steps per day", ylab = "Frequency", col = "red")
+```
+
+```{r mean total steps per day, echo=TRUE}
+mean(totalsteps$x,na.rm=TRUE)
+```
+
+```{r median total steps per day, echo=TRUE}
+median(totalsteps$x,na.rm=TRUE)
+```
+
 
 ## What is the average daily activity pattern?
 
 
+Make a time series plot (i.e. 𝚝𝚢𝚙𝚎 = "𝚕") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
+
+```{r average steps by interval, echo=TRUE}
+averagestepstime <- aggregate(activity$steps,by=list(Interval=activity$interval),FUN=mean,na.rm=TRUE)
+plot(averagestepstime,type="l",xlab="Time",ylab="Average Number of steps")
+```
+
+Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
+
+```{r interval max for average steps , echo=TRUE}
+maxsteps <- max(averagestepstime$x)
+averagestepstime$Interval[averagestepstime$x==maxsteps]
+```
+
+The interval from 8:35 to 8:40
+
 
 ## Imputing missing values
 
+
+Number of NA value in activity datafram
+```{r number of na , echo=TRUE}
+sum(is.na(activity$steps))
+```
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
